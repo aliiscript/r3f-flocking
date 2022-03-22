@@ -1,36 +1,36 @@
-import { ReactNode } from "react"
-import React, { useState, useEffect } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { ReactNode } from "react";
+import React, { useState, useEffect } from "react";
+import { Canvas } from "@react-three/fiber";
 import { Perf } from "r3f-perf";
-import styled from 'styled-components';
+import styled from "styled-components";
 
 interface CanvasLayoutProps {
-    children: ReactNode
+    children: ReactNode;
 }
 
 function CanvasLayout({ children }: CanvasLayoutProps) {
     // Window Variables
-    const [width, setWidth] = useState(0)
-    const [height, setHeight] = useState(0)
-    const [pixelRatio, setPixelRatio] = useState(0)
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
+    const [pixelRatio, setPixelRatio] = useState(0);
 
     useEffect(() => {
-        const canvas = document.querySelector('.webgl')
+        const canvas = document.querySelector(".webgl");
 
-        setWidth(window.innerWidth)
-        setHeight(window.innerHeight)
-        setPixelRatio(window.devicePixelRatio)
+        setWidth(window.innerWidth);
+        setHeight(window.innerHeight);
+        setPixelRatio(window.devicePixelRatio);
 
         // Resizing
-        window.addEventListener('resize', () => {
-            setWidth(window.innerWidth)
-            setHeight(window.innerHeight)
-            setPixelRatio(Math.min(window.devicePixelRatio, 2))
-        })
+        window.addEventListener("resize", () => {
+            setWidth(window.innerWidth);
+            setHeight(window.innerHeight);
+            setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        });
 
         // FullScreen Logic
         // window.addEventListener('dblclick', () => {
-        //     // Have yet to find a solution to stop complaining 
+        //     // Have yet to find a solution to stop complaining
         //     // about element not having the property webkitFullscreenElement
 
         //     const document: any = window.document
@@ -48,40 +48,39 @@ function CanvasLayout({ children }: CanvasLayoutProps) {
         //         }
         //     }
         // })
-
     }, []);
 
     // Size
     const sizes = {
         width: typeof window !== undefined ? width : undefined,
-        height: typeof window !== undefined ? height : undefined
-    }
+        height: typeof window !== undefined ? height : undefined,
+    };
     // Aspect
-    let aspectRatio = width/height
+    let aspectRatio = width / height;
 
     return (
         <>
             <StyledCanvas
-                style={{ 
-                    width: sizes.width, 
+                style={{
+                    width: sizes.width,
                     height: sizes.height,
-                    backgroundColor: "black" 
+                    // color from blender world theme
+                    backgroundColor: "rgb(60,60,60)",
                 }}
                 // pixelRatio={pixelRatio}
                 camera={{
-                    position: [0, 0, 3],
+                    position: [0, 0, 2.5],
                     aspect: aspectRatio,
                     near: 0.1,
                     far: 100,
                 }}
             >
                 {children}
-               
-                <Perf position={"bottom-right"} />
+
+                {/* <Perf position={"bottom-right"} /> */}
             </StyledCanvas>
         </>
     );
-
 }
 
 const StyledCanvas = styled(Canvas)`

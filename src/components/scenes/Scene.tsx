@@ -3,6 +3,8 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import type { Mesh } from "three";
 
+import Birds from "../Birds";
+
 interface SceneProps {
     color: string;
     hoverColor: string;
@@ -46,9 +48,7 @@ const Box = (props: BoxProps) => {
 function Scene(props: SceneProps) {
     return (
         <>
-            <ambientLight />
-            <pointLight position={[10, 10, 10]} />
-            <Box color={props.color} hoverColor={props.hoverColor} />
+            <Birds />
             <OrbitControls />
         </>
     );

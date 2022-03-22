@@ -34,7 +34,7 @@
     "**/*.ts",
     "**/*.tsx",
     "next.config.js"
-  ],
+, "src/components/Birds/BirdsGeometry.ts"  ],
   "exclude": [
     "node_modules"
   ]
