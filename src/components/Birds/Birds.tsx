@@ -9,14 +9,15 @@ import fragment from "../../shaders/fragment.glsl";
 import vert from "../../shaders/vertexParticles.glsl";
 
 interface BirdProps {}
-interface TestObjProps {}
+interface TestObjProps {
+    posTexture: any;
+    gpuCompute: any;
+}
 
 const WIDTH = 32;
 const BOUNDS = 800;
 const BOUNDS_HALF = BOUNDS / 2;
 
-let gpuCompute: any;
-let positionVariable: any;
 let velocityUniforms;
 let birdUniforms;
 
@@ -34,7 +35,7 @@ const TestObj = (props: TestObjProps) => {
             uResolution: {
                 value: new Vector2(size.width * dpr, size.height * dpr),
             },
-            positionTexture: { value: 0 },
+            positionTexture: { value: null },
         };
     }, [dpr, size.height, size.width]);
 
@@ -74,17 +75,21 @@ const TestObj = (props: TestObjProps) => {
         pointsGeoRef.current?.setAttribute("reference", pointsUVAttribute);
     }
 
+    console.log(props.posTexture);
+
     useFrame((_) => {
         let time = _.clock.getElapsedTime();
         uniforms.uTime.value = time * 2.0;
 
+        props.gpuCompute.compute();
+
         if (matRef) {
             matRef.current?.uniforms.positionTexture.value =
-                gpuCompute.getCurrentRenderTarget(positionVariable).texture;
+                props.gpuCompute.getCurrentRenderTarget(
+                    props.posTexture
+                ).texture;
         }
     });
-
-    console.log(positionVariable.material.uniforms["time"].value);
 
     return (
         <points>
@@ -101,7 +106,8 @@ const TestObj = (props: TestObjProps) => {
 
 const Birds = (props: BirdProps) => {
     const geometry = new BirdGeometry();
-
+    let positionVariable: any;
+    let gpuCompute: any;
     const { gl } = useThree();
 
     // gl: (canvas: any) => {
@@ -127,7 +133,7 @@ const Birds = (props: BirdProps) => {
         dtPosition
     );
 
-    positionVariable.material.uniforms["time"] = { value: 0 };
+    positionVariable.material.uniforms["time"] = { value: null };
 
     positionVariable.wrapS = THREE.RepeatWrapping;
     positionVariable.wrapT = THREE.RepeatWrapping;
@@ -139,7 +145,7 @@ const Birds = (props: BirdProps) => {
         positionVariable.material.uniforms["time"] = time;
     });
 
-    return <TestObj />;
+    return <TestObj posTexture={positionVariable} gpuCompute={gpuCompute} />;
 };
 
 function fillPosition(texture: THREE.DataTexture) {
